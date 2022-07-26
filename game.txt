@@ -1,0 +1,170 @@
+let ball_x, ball_y,ball_diameter, ball_dx, ball_dy, life;
+let score=0;
+life = 5;
+let paddle_x,paddle_y,paddle_width,paddle_height,paddle_dx,paddle_dy;
+let bricks=[];
+function setup() {
+  createCanvas(400, 400);
+  ball_x=width/2;
+  ball_y=height/2;
+  ball_diameter=30;
+ 
+  ball_dx=3;
+  ball_dy=2;
+    for(i = 0; i < 4; i++){
+    bricks.push([]);
+      
+    for(j = 0; j< 4; j++){
+      if((i == 0) & (j == 0)){
+        bricks[i].push({
+        width:90,
+       height: 20,
+       x: (j * 95) + 10,
+       y: (i * 25) + 40,
+       status: 'hide'
+     })
+      }else {
+           bricks[i].push({
+        width:90,
+       height: 20,
+       x: (j * 95) + 10,
+       y: (i * 25) + 40,
+       status: 'show'
+     })
+
+      }
+    }
+}
+
+  // paddle_x=
+  paddle_width=68;
+  paddle_height=20;
+  paddle_x=width/2-(paddle_width/2);
+  paddle_y=400-paddle_height;
+  paddle_dx=7;
+  paddle_dy=4;
+
+  // paddle_diameter=30;
+
+}
+function draw()
+{
+  background("black");
+
+  circle(ball_x,ball_y,ball_diameter)
+  rect(paddle_x,paddle_y,paddle_width,paddle_height);
+  for(i = 0; i < 4; i++) {
+      if (i == 0) {
+        fill("#E91E63");}
+    else if (i == 1) {fill("rgb(229,163,42)");
+                     }
+    else if (i == 2) {fill("#294757");}
+    else if (i == 3) {fill("rgb(248,237,239)");}
+    for(j = 0; j < 4; j++){
+      if(bricks[i][j].status === 'show'){
+        rect(bricks[i][j].x, bricks[i][j].y, bricks[i][j].width, bricks[i][j].height)
+      }
+
+    }
+}
+fill("white");
+text("Score: ", 20, 20)
+fill("white")
+text(score, 100, 20)
+  fill("white")
+  text("Lives: ", 120, 20)
+  fill("white")
+text(life, 180, 20)
+  ball_x+=ball_dx;
+  ball_y+=ball_dy;
+  if(ball_x>=400-(ball_diameter/2)){
+  ball_dx=-(ball_dx);
+  }
+  if(ball_y>=400-(ball_diameter/2)){
+  ball_dy=-(ball_dy);
+  }
+  if(ball_x<=0+(ball_diameter/2)){
+  ball_dx=-(ball_dx);
+  }
+  if(ball_y<=0+(ball_diameter/2)){
+  ball_dy=-(ball_dy);
+  }
+  if(ball_x>=paddle_x && ball_x<=paddle_x+paddle_width && (ball_y+(ball_diameter/2))>=paddle_y )//ball lagna
+  {
+
+    ball_dy=-(ball_dy);
+  }
+  if((ball_x<=paddle_x || ball_x>=paddle_x+paddle_width) && (ball_y+(ball_diameter/2)>=height) )//Loosing State
+  {
+    // life--
+    life=life-1;
+
+    if(life===0){
+    background('Black');
+    ball_dx=0;
+    ball_dy=0;
+    paddle_dx=0;
+    fill('red');
+    text("HAHA YOU LOST LOL", width/2, height/2.5)
+      noLoop();
+    }
+
+
+  }
+
+  if(keyIsDown(LEFT_ARROW)){
+    if(paddle_x<=0){
+    paddle_x-=0;}
+      else{
+      paddle_x-=paddle_dx;  
+      }
+  }//Paddle Limit Left
+
+  if(keyIsDown(RIGHT_ARROW)){
+
+    if(paddle_x>=400-(paddle_width)){
+    paddle_x+=0;}
+      else{
+      paddle_x+=paddle_dx;  
+      }
+
+
+  }//Paddle Limit Right
+
+  let ball_bp,ball_lp,ball_rp,ball_tp;
+  ball_bp = ball_y + ball_diameter/2;
+  ball_lp = ball_x - ball_diameter/2;
+  ball_rp = ball_x + ball_diameter/2;
+  ball_tp = ball_y - ball_diameter/2;
+
+  for(i=0;i<4;i++){
+    for(j=0;j<4;j++){
+      if(bricks[i][j].status == 'show'){
+        let bp,lp,rp,tp;
+        bp = bricks[i][j].y + bricks[i][j].height;
+        lp = bricks[i][j].x;
+        rp = bricks[i][j].x + bricks[i][j].width;
+        tp = bricks[i][j].y;
+
+
+
+        if(bp >= ball_tp && (lp <= ball_rp && rp >= ball_lp)){
+          score++;
+          bricks[i][j].status = 'hide';
+          ball_dy = -(ball_dy);
+          paddle_width-=5;
+          if(score==15){
+          fill('white');
+          text("You Won Man!",180,200) 
+          noLoop();
+        }
+
+        }
+
+      }
+   }
+
+
+}
+  
+  }
